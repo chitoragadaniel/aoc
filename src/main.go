@@ -204,6 +204,37 @@ func d5() {
 			count++
 		}
 	}
-
 	printP1(count)
+
+	// Part 2
+	count = 0
+	for _, str := range lines {
+		arr := strings.Split(str, "")
+		var pairs = map[string]int{
+			arr[0] + arr[1]: 1,
+		}
+		between := false
+		two_pairs := false
+		pr_pair := ""
+		for i := 1; i < len(arr)-1; i++ {
+			// Check the between
+			if arr[i-1] == arr[i+1] {
+				between = true
+			}
+			// Check the pairs
+			pair := arr[i] + arr[i+1]
+			if arr[i-1]+arr[i] != pair || pr_pair == pair {
+				pairs[pair] += 1
+				if pairs[pair] > 1 {
+					two_pairs = true
+				}
+			}
+			pr_pair = arr[i-1] + arr[i]
+		}
+		if between && two_pairs {
+			count++
+		}
+	}
+	printP2(count)
+
 }
