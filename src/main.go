@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"os"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -11,7 +12,7 @@ import (
 )
 
 func main() {
-	d5()
+	d6()
 }
 
 func d1() {
@@ -237,4 +238,53 @@ func d5() {
 	}
 	printP2(count)
 
+}
+func d6() {
+	//Initialization
+	lines := scanLines("input/d6.txt")
+
+	// Part 1 & 2
+	var grid [1000][1000]bool
+	var grid2 [1000][1000]int
+
+	r, _ := regexp.Compile("([0-9]+)")
+	for _, line := range lines {
+		nr := r.FindAllString(line, 4)
+		var cord = []int{}
+		for _, str := range nr {
+			n, _ := strconv.Atoi(str)
+			cord = append(cord, n)
+		}
+
+		for i := cord[0]; i <= cord[2]; i++ {
+			for j := cord[1]; j <= cord[3]; j++ {
+				switch {
+				case strings.Contains(line, "turn on"):
+					grid[i][j] = true
+					grid2[i][j] += 1
+				case strings.Contains(line, "turn off"):
+					grid[i][j] = false
+					if grid2[i][j] != 0 {
+						grid2[i][j] -= 1
+					}
+				case strings.Contains(line, "toggle"):
+					grid[i][j] = !grid[i][j]
+					grid2[i][j] += 2
+				}
+			}
+		}
+	}
+
+	count1 := 0
+	count2 := 0
+	for i := 0; i < 1000; i++ {
+		for j := 0; j < 1000; j++ {
+			if grid[i][j] {
+				count1++
+			}
+			count2 += grid2[i][j]
+		}
+	}
+	printP1(count1)
+	printP2(count2)
 }
