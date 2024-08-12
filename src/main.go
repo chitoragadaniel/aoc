@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	d6()
+
 }
 
 func d1() {
@@ -287,4 +287,100 @@ func d6() {
 	}
 	printP1(count1)
 	printP2(count2)
+}
+func d7() {
+	// Initialization
+	lines := scanLines("input/d7.txt")
+
+	// Part 1
+	totalInstr := len(lines)
+	currentInstr := 0
+	dict := make(map[string]int)
+	left := make([][]string, totalInstr)
+
+	// Populate the left instruction slice
+	for i, line := range lines {
+		param := strings.Split(line, " ")
+		left[i] = param
+	}
+
+	checkWire := func(s string) bool {
+		_, err := strconv.Atoi(s)
+		_, ok := dict[s]
+		return err == nil || ok
+	}
+
+	getWire := func(s string) int {
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			i = dict[s]
+		}
+		return i
+	}
+
+	connectWires := func() {
+		for totalInstr != currentInstr {
+			for i, param := range left {
+				if param == nil {
+					continue
+				}
+				switch len(param) {
+				case 3:
+					if checkWire(param[0]) {
+						dict[param[2]] = getWire(param[0])
+						left[i] = nil
+						currentInstr++
+						break
+					}
+				case 4:
+					if checkWire(param[1]) {
+						dict[param[3]] = getWire(param[1]) ^ 0xFFFF
+						left[i] = nil
+						currentInstr++
+						break
+					}
+				case 5:
+					if checkWire(param[0]) && checkWire(param[2]) {
+						switch param[1] {
+						case "AND":
+							dict[param[4]] = getWire(param[0]) & getWire(param[2])
+						case "OR":
+							dict[param[4]] = getWire(param[0]) | getWire(param[2])
+						case "LSHIFT":
+							dict[param[4]] = getWire(param[0]) << getWire(param[2])
+						case "RSHIFT":
+							dict[param[4]] = getWire(param[0]) >> getWire(param[2])
+						}
+						left[i] = nil
+						currentInstr++
+						break
+					}
+				}
+			}
+		}
+	}
+	connectWires()
+	res := dict["a"]
+	printP1(res)
+
+	// Part 2 | Reset map, counter and the list of instructions
+	dict = make(map[string]int)
+	left = make([][]string, totalInstr)
+	for i, line := range lines {
+		param := strings.Split(line, " ")
+		left[i] = param
+	}
+	currentInstr = 1
+
+	// Override b
+	dict["b"] = res
+	left[89] = nil
+	// Reconnect the wires
+	connectWires()
+	res = dict["a"]
+	printP2(res)
+}
+func d8() {
+	// Initialization
+
 }
