@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-
+	d8()
 }
 
 func d1() {
@@ -382,5 +382,39 @@ func d7() {
 }
 func d8() {
 	// Initialization
+	lines := scanLines("input/d8.txt")
 
+	// Part 1
+	res := 0
+	for _, line := range lines {
+		res += len(line)
+		arr := strings.Split(line, "")
+		for i := 1; i < len(arr)-1; i++ {
+			if arr[i] == "\\" {
+				switch arr[i+1] {
+				case "x":
+					i += 3
+				case "\\", "\"":
+					i++
+				}
+			}
+			res--
+		}
+	}
+	printP1(res)
+
+	// Part 2
+	res = 0
+	for _, line := range lines {
+		res -= len(line)
+		arr := strings.Split(line, "")
+		for _, c := range arr {
+			if c == "\\" || c == "\"" {
+				res++
+			}
+			res++
+		}
+		res += 2
+	}
+	printP2(res)
 }
